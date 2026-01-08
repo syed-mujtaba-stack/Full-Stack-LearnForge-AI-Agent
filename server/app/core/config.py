@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
+    # Firebase credentials (optional, alternative to JSON file)
+    FIREBASE_PROJECT_ID: str | None = None
+    FIREBASE_PRIVATE_KEY: str | None = None
+    FIREBASE_CLIENT_EMAIL: str | None = None
+
     class Config:
         case_sensitive = True
         env_file = ".env"

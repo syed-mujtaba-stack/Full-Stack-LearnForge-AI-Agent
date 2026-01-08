@@ -9,6 +9,7 @@ dependencies = [
     "asyncpg>=0.31.0",
     "dotenv>=0.9.9",
     "fastapi[standard,standred]>=0.128.0",
+    "firebase-admin>=7.1.0",
     "openai>=2.14.0",
     "pydantic>=2.12.5",
     "sqlalchemy>=2.0.45",
