@@ -1,0 +1,62 @@
+name: LearnForge AI CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    # Frontend Checks
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+        
+    - name: Install Frontend Dependencies
+      working-directory: ./client
+      run: npm ci
+      
+    - name: Frontend Lint
+      working-directory: ./client
+      run: npm run lint
+      
+    # Backend Checks
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install UV
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      
+    - name: Install Backend Dependencies
+      working-directory: ./server
+      run: uv sync
+      
+    # - name: Backend Type Check
+    #   working-directory: ./server
+    #   run: uv run mypy .
+
+  build:
+    needs: quality-check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Frontend
+      working-directory: ./client
+      run: |
+        npm ci
+        npm run build
+
+    - name: Build Backend Docker
+      working-directory: ./server
+      run: docker build . -t edugenius-backend:latest
