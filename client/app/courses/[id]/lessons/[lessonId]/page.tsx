@@ -27,37 +27,43 @@ export default async function LessonPage({ params }: { params: { id: string, les
     }
 
     return (
-        <div className="container max-w-5xl py-10">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
-                <Link href={`/courses/${courseId}`} className="hover:text-foreground">
-                    {course.title}
-                </Link>
-                <span>/</span>
-                <span className="text-foreground">{lesson.title}</span>
-            </div>
-
-            <div className="space-y-8">
-                {lesson.video_url ? (
-                    <VideoPlayer
-                        lessonId={lessonId}
-                        videoUrl={lesson.video_url}
-                        initialProgress={progress.video_progress}
-                    />
-                ) : null}
-
-                <div className="flex flex-col gap-4">
-                    <h1 className="text-3xl font-bold">{lesson.title}</h1>
-                    {lesson.content && <ArticleViewer content={lesson.content} />}
+        <div className="min-h-screen bg-background text-foreground pb-20">
+            <div className="container max-w-5xl py-10 px-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-12 bg-muted/30 px-4 py-2 rounded-full w-fit border border-border">
+                    <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
+                    <span>/</span>
+                    <Link href={`/courses/${courseId}`} className="hover:text-primary transition-colors line-clamp-1 max-w-[200px]">
+                        {course.title}
+                    </Link>
+                    <span>/</span>
+                    <span className="text-foreground font-medium line-clamp-1">{lesson.title}</span>
                 </div>
-            </div>
 
-            <div className="flex justify-between items-center mt-12 pt-8 border-t">
-                <button className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                    <ChevronLeft className="h-4 w-4" /> Previous Lesson
-                </button>
-                <button className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                    Next Lesson <ChevronRight className="h-4 w-4" />
-                </button>
+                <div className="space-y-12">
+                    {lesson.video_url ? (
+                        <div className="rounded-3xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-black aspect-video">
+                            <VideoPlayer
+                                lessonId={lessonId}
+                                videoUrl={lesson.video_url}
+                                initialProgress={progress.video_progress}
+                            />
+                        </div>
+                    ) : null}
+
+                    <div className="flex flex-col gap-6">
+                        <h1 className="text-4xl md:text-5xl font-black tracking-tight">{lesson.title}</h1>
+                        {lesson.content && <ArticleViewer content={lesson.content} />}
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center mt-20 pt-10 border-t border-border">
+                    <button className="flex items-center gap-3 px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all active:scale-95 border border-border">
+                        <ChevronLeft className="h-5 w-5" /> Previous
+                    </button>
+                    <button className="flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20">
+                        Next <ChevronRight className="h-5 w-5" />
+                    </button>
+                </div>
             </div>
         </div>
     );
