@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     FIREBASE_PROJECT_ID: str | None = None
     FIREBASE_PRIVATE_KEY: str | None = None
     FIREBASE_CLIENT_EMAIL: str | None = None
+    FIREBASE_WEB_API_KEY: str | None = None
 
     class Config:
         case_sensitive = True

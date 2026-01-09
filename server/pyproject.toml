@@ -1,18 +1,35 @@
 [project]
-name = "server"
+name = "edugenius-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "Backend for EduGenius AI"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "alembic>=1.17.2",
-    "asyncpg>=0.31.0",
-    "dotenv>=0.9.9",
-    "fastapi[standard,standred]>=0.128.0",
-    "firebase-admin>=7.1.0",
-    "openai>=2.14.0",
-    "pydantic>=2.12.5",
-    "sqlalchemy>=2.0.45",
-    "supabase>=2.27.1",
-    "uvicorn[standard]>=0.40.0",
+    "fastapi[standard]",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "alembic",
+    "asyncpg",
+    "pydantic-settings",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "python-multipart",
+    "httpx",
+    "firebase-admin",
+    "bcrypt",
 ]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest",
+    "black",
+    "isort",
+    "flake8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
