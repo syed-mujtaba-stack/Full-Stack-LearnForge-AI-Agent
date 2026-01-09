@@ -10,6 +10,8 @@ from app.schemas.course import (
     ModuleCreate, ModuleUpdate,
     LessonCreate, LessonUpdate
 )
+from app.models.progress import UserProgress
+from sqlalchemy import func
 
 class CRUDCourse:
     async def get(self, db: AsyncSession, id: int) -> Optional[Course]:
@@ -56,6 +58,37 @@ class CRUDCourse:
             await db.delete(obj)
             await db.commit()
         return obj
+
+    async def get_course_progress(self, db: AsyncSession, *, course_id: int, user_id: str) -> float:
+        """
+        Calculate progress percentage: (completed lessons / total lessons) * 100
+        """
+        # Get total lessons
+        total_result = await db.execute(
+            select(func.count(Lesson.id))
+            .join(Module)
+            .filter(Module.course_id == course_id)
+        )
+        total_lessons = total_result.scalar() or 0
+        if total_lessons == 0:
+            return 0.0
+
+        # Get completed lessons
+        completed_result = await db.execute(
+            select(func.count(UserProgress.id))
+            .filter(
+                UserProgress.user_id == user_id,
+                UserProgress.is_completed == True,
+                UserProgress.lesson_id.in_(
+                    select(Lesson.id)
+                    .join(Module)
+                    .filter(Module.course_id == course_id)
+                )
+            )
+        )
+        completed_lessons = completed_result.scalar() or 0
+        
+        return (completed_lessons / total_lessons) * 100
 
 class CRUDModule:
     async def create(self, db: AsyncSession, *, obj_in: ModuleCreate, course_id: int) -> Module:

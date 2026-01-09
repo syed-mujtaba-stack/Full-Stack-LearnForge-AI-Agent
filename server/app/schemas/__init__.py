@@ -5,3 +5,4 @@ from .course import (
     Lesson, LessonCreate, LessonUpdate
 )
 from .progress import UserProgress, UserProgressCreate, UserProgressUpdate
+from .enrollment import EnrollmentResponse, EnrollmentCreate
