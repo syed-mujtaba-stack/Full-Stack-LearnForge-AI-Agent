@@ -38,8 +38,10 @@ export async function fetchClient<T>(endpoint: string, options: FetchOptions = {
         }
 
         return response.json();
-    } catch (err: any) {
-        console.error(`API Fetch Error [${fullUrl}]:`, err.message);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            console.error(`API Fetch Error [${fullUrl}]:`, err.message);
+        }
         throw err;
     }
 }

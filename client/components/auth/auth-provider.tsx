@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // If auth is not ready, we still need to stop loading at some point
         // or show that it's unconfigured.
         if (typeof unsubscribe !== 'function') {
-            setLoading(false);
+            Promise.resolve().then(() => setLoading(false));
         }
 
         return () => {

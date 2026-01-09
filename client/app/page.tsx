@@ -1,18 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, Variants } from "framer-motion";
-import { Sparkles, Shield, Zap, ArrowRight, Github, BookOpen } from "lucide-react";
+import { motion, useTransform, useSpring, useMotionValue, Variants } from "framer-motion";
+import { Sparkles, Shield, Zap, ArrowRight, Github } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 
 export default function LandingPage() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-
-  // Parallax values for background elements
-  const bgX = useSpring(useTransform(mouseX, [-500, 500], [20, -20]), { stiffness: 50, damping: 30 });
-  const bgY = useSpring(useTransform(mouseY, [-500, 500], [20, -20]), { stiffness: 50, damping: 30 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
@@ -165,20 +161,24 @@ export default function LandingPage() {
           </div>
 
           {/* 6. Aura Flares (Random Intelligence Bursts) */}
-          {[...Array(4)].map((_, i) => (
+          {useMemo(() => [...Array(4)].map((_, i) => ({
+            left: `${20 + Math.random() * 60}%`,
+            top: `${20 + Math.random() * 60}%`,
+            duration: 3 + Math.random() * 5,
+          })), []).map((flare, i) => (
             <motion.div
               key={`flare-${i}`}
               className="absolute w-32 h-32 bg-white blur-[60px] rounded-full mix-blend-overlay"
               style={{
-                left: `${20 + Math.random() * 60}%`,
-                top: `${20 + Math.random() * 60}%`,
+                left: flare.left,
+                top: flare.top,
               }}
               animate={{
                 scale: [0, 1.5, 0],
                 opacity: [0, 0.4, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 5,
+                duration: flare.duration,
                 repeat: Infinity,
                 delay: i * 4,
               }}
@@ -186,22 +186,26 @@ export default function LandingPage() {
           ))}
 
           {/* 7. Data Stream Knowledge Packets */}
-          {[...Array(15)].map((_, i) => (
+          {useMemo(() => [...Array(15)].map((_, i) => ({
+            left: `${(i + 1) * 6.5}%`,
+            duration: 3 + Math.random() * 5,
+            delay: Math.random() * 15,
+          })), []).map((stream, i) => (
             <motion.div
               key={`dstream-${i}`}
               className="absolute w-[2px] bg-gradient-to-b from-transparent via-primary/50 to-transparent z-10"
               style={{
                 height: '30vh',
-                left: `${(i + 1) * 6.5}%`,
+                left: stream.left,
                 top: '-30vh',
               }}
               animate={{
                 y: ['0vh', '150vh'],
               }}
               transition={{
-                duration: 3 + Math.random() * 5,
+                duration: stream.duration,
                 repeat: Infinity,
-                delay: Math.random() * 15,
+                delay: stream.delay,
                 ease: "linear"
               }}
             />
@@ -220,24 +224,30 @@ export default function LandingPage() {
           </motion.div>
 
           {/* 9. Nexus Particle Intelligence */}
-          {[...Array(100)].map((_, i) => (
+          {useMemo(() => [...Array(100)].map(() => ({
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            x: [0, (Math.random() - 0.5) * 150, 0],
+            duration: 3 + Math.random() * 7,
+            delay: Math.random() * 8,
+          })), []).map((part, i) => (
             <motion.div
               key={`omnipart-${i}`}
               className="absolute w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.9)]"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                left: part.left,
+                top: part.top,
               }}
               animate={{
                 y: [0, -400, 0],
-                x: [0, (Math.random() - 0.5) * 150, 0],
+                x: part.x,
                 scale: [0, 3.5, 0],
                 opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 3 + Math.random() * 7,
+                duration: part.duration,
                 repeat: Infinity,
-                delay: Math.random() * 8,
+                delay: part.delay,
                 ease: "easeInOut"
               }}
             />
@@ -246,11 +256,14 @@ export default function LandingPage() {
           {/* 10. Neural Grid Constellation (Reactive Intensity) */}
           <div className="absolute inset-0 z-5 opacity-40" style={{ filter: 'url(#liquid)' }}>
             <svg className="w-full h-full">
-              {[...Array(20)].map((_, i) => (
+              {useMemo(() => [...Array(20)].map(() => ({
+                x1: `${Math.random() * 100}%`, y1: `${Math.random() * 100}%`,
+                x2: `${Math.random() * 100}%`, y2: `${Math.random() * 100}%`,
+              })), []).map((line, i) => (
                 <motion.line
                   key={`transline-${i}`}
-                  x1={`${Math.random() * 100}%`} y1={`${Math.random() * 100}%`}
-                  x2={`${Math.random() * 100}%`} y2={`${Math.random() * 100}%`}
+                  x1={line.x1} y1={line.y1}
+                  x2={line.x2} y2={line.y2}
                   stroke="currentColor" strokeWidth="0.8"
                   className="text-primary"
                   animate={{ opacity: [0.1, 0.6, 0.1], strokeWidth: [0.5, 1.5, 0.5] }}

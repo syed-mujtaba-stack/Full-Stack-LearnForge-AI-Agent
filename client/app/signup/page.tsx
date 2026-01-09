@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { authService } from "@/services/auth-service";
-import { BookOpen, Mail, Lock, Loader2, ArrowRight, User, Shield } from "lucide-react";
+import { BookOpen, Mail, Lock, Loader2, ArrowRight, Shield } from "lucide-react";
 
 export default function SignupPage() {
     const [email, setEmail] = useState("");
@@ -26,8 +26,8 @@ export default function SignupPage() {
         try {
             await authService.signUp(email, password);
             router.push("/dashboard");
-        } catch (err: any) {
-            setError(err.message || "Failed to create account");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to create account");
         } finally {
             setLoading(false);
         }
@@ -37,8 +37,8 @@ export default function SignupPage() {
         try {
             await authService.signInWithGoogle();
             router.push("/dashboard");
-        } catch (err: any) {
-            setError(err.message || "Google signup failed");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Google signup failed");
         }
     };
 

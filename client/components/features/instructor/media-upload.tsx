@@ -9,7 +9,7 @@ interface MediaUploadProps {
     folder?: string;
 }
 
-export function MediaUpload({ onUploadSuccess, folder = "media" }: MediaUploadProps) {
+export function MediaUpload({ onUploadSuccess }: MediaUploadProps) {
     const [file, setFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -47,8 +47,8 @@ export function MediaUpload({ onUploadSuccess, folder = "media" }: MediaUploadPr
             onUploadSuccess(response.url);
             setSuccess(true);
             setFile(null);
-        } catch (err) {
-            setError("Failed to upload file. Please try again.");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to upload file. Please try again.");
         } finally {
             setIsUploading(false);
         }

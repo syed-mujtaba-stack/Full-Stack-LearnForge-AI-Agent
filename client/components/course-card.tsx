@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Course } from "@/services/course-service";
 import { cn } from "@/lib/utils";
-import { BookOpen, Calendar, Clock } from "lucide-react";
+import { BookOpen, Calendar } from "lucide-react";
 
 import { motion } from "framer-motion";
 

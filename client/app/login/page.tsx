@@ -21,8 +21,8 @@ export default function LoginPage() {
         try {
             await authService.signIn(email, password);
             router.push("/dashboard");
-        } catch (err: any) {
-            setError(err.message || "Failed to login");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to login");
         } finally {
             setLoading(false);
         }
@@ -32,8 +32,8 @@ export default function LoginPage() {
         try {
             await authService.signInWithGoogle();
             router.push("/dashboard");
-        } catch (err: any) {
-            setError(err.message || "Google login failed");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Google login failed");
         }
     };
 

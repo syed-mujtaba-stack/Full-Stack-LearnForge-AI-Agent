@@ -140,7 +140,7 @@ export default function StudentDashboard() {
                             animate={{ opacity: 1 }}
                             className="text-center py-20 bg-muted/30 border border-dashed border-border rounded-3xl"
                         >
-                            <p className="text-muted-foreground italic mb-6">You haven't enrolled in any courses yet.</p>
+                            <p className="text-muted-foreground italic mb-6">You haven&apos;t enrolled in any courses yet.</p>
                             <Link href="/courses" className="px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all active:scale-95 inline-block">
                                 Start Learning Now
                             </Link>

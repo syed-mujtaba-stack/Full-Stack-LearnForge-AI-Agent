@@ -2,10 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./logo";
-import { useEffect, useState } from "react";
 
 export const LoadingScreen = () => {
-    const [isVisible, setIsVisible] = useState(true);
+    const isVisible = true;
 
     return (
         <AnimatePresence>
@@ -35,7 +34,9 @@ export const LoadingScreen = () => {
                     </div>
 
                     <div className="relative scale-150">
-                        <Logo size={80} className="flex-col !gap-6 scale-125" />
+                        <div className="flex flex-col items-center">
+                            <Logo size={80} className="scale-125" />
+                        </div>
 
                         {/* Loading Bar */}
                         <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-48 h-1 bg-muted rounded-full overflow-hidden">

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { courseService, Course } from "@/services/course-service";
-import { enrollmentService, CourseWithProgress } from "@/services/enrollment-service";
+import { enrollmentService } from "@/services/enrollment-service";
 import { CourseCard } from "@/components/course-card";
-import { Search, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
@@ -31,6 +31,7 @@ export default function CoursesPage() {
     const [courses, setCourses] = useState<Course[]>([]);
     const [enrolledIds, setEnrolledIds] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [enrolling, setEnrolling] = useState<number | null>(null);
     const router = useRouter();
 
