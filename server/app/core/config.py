@@ -28,6 +28,15 @@ class Settings(BaseSettings):
     FIREBASE_PRIVATE_KEY: str | None = None
     FIREBASE_CLIENT_EMAIL: str | None = None
     FIREBASE_WEB_API_KEY: str | None = None
+    
+    # AI Providers
+    GOOGLE_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+    
+    # Vector DB
+    PINECONE_API_KEY: str = ""
+    PINECONE_ENVIRONMENT: str = "us-east-1"
+    PINECONE_INDEX_NAME: str = "edugenius-index"
 
     class Config:
         case_sensitive = True

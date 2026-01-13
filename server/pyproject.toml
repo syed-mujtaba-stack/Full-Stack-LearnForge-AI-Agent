@@ -17,6 +17,10 @@ dependencies = [
     "httpx",
     "firebase-admin",
     "bcrypt",
+    "openai>=2.14.0",
+    "google-generativeai>=0.8.6",
+    "pinecone",
+    "requests",
 ]
 
 [tool.uv]

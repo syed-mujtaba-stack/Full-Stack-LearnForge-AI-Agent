@@ -6,3 +6,4 @@ from .course import (
 )
 from .progress import UserProgress, UserProgressCreate, UserProgressUpdate
 from .enrollment import EnrollmentResponse, EnrollmentCreate
+from .ai import ChatRequest, ChatResponse, QuizGenerateRequest, QuizResponse, CodeExplainRequest, CodeExplainResponse

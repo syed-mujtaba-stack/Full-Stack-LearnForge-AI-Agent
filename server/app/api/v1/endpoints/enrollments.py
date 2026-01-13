@@ -60,8 +60,10 @@ async def get_my_courses(
     """
     uid = current_user["uid"]
     
+    from sqlalchemy.orm import selectinload
     result = await db.execute(
         select(models.course.Course)
+        .options(selectinload(models.course.Course.modules).selectinload(models.course.Module.lessons))
         .join(models.enrollment.Enrollment)
         .filter(models.enrollment.Enrollment.user_id == uid)
     )

@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { motion, useTransform, useSpring, useMotionValue, Variants } from "framer-motion";
-import { Sparkles, Shield, Zap, ArrowRight, Github } from "lucide-react";
+import { Sparkles, Shield, Zap, ArrowRight, Github, User as UserIcon, LogOut, LayoutDashboard } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/components/auth/auth-provider";
+import { authService } from "@/services/auth-service";
 
 export default function LandingPage() {
+  const { user } = useAuth();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -97,10 +100,55 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="/courses" className="hover:text-primary transition-colors">Courses</Link>
-            <Link href="/login" className="hover:text-primary transition-colors">Login</Link>
-            <Link href="/signup" className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-all font-bold shadow-lg shadow-primary/20">
-              Join Free
-            </Link>
+
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-full hover:bg-primary/20 transition-all font-bold"
+                >
+                  <LayoutDashboard size={18} />
+                  Dashboard
+                </Link>
+                <div className="relative group">
+                  <div className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center text-primary font-black cursor-pointer hover:border-primary/50 transition-colors overflow-hidden">
+                    {user.photoURL ? (
+                      <img src={user.photoURL} alt={user.displayName || "User"} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="uppercase">{user.email?.[0] || <UserIcon size={20} />}</span>
+                    )}
+                  </div>
+
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-2xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <div className="px-4 py-2 border-b border-border/50 mb-1">
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-secondary/50 transition-colors"
+                    >
+                      <UserIcon size={16} />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => authService.signOut()}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                    >
+                      <LogOut size={16} />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <Link href="/login" className="hover:text-primary transition-colors">Login</Link>
+                <Link href="/signup" className="px-5 py-2.5 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-all font-bold shadow-lg shadow-primary/20">
+                  Join Free
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -349,8 +397,8 @@ export default function LandingPage() {
               transition={{ delay: 1.2, duration: 0.8 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-6"
             >
-              <Link href="/signup" className="group px-10 py-5 bg-primary text-primary-foreground rounded-full text-lg font-black transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/30 flex items-center gap-2">
-                Start Free Journey
+              <Link href={user ? "/dashboard" : "/signup"} className="group px-10 py-5 bg-primary text-primary-foreground rounded-full text-lg font-black transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/30 flex items-center gap-2">
+                {user ? "Go to Dashboard" : "Start Free Journey"}
                 <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link href="/courses" className="px-10 py-5 bg-background text-foreground rounded-full text-lg font-bold transition-all hover:bg-secondary/50 border border-border/50 backdrop-blur-md">
@@ -439,8 +487,8 @@ export default function LandingPage() {
             Join 50,000+ ambitious minds who have already unlocked their
             potential with EduGenius AI.
           </p>
-          <Link href="/signup" className="px-12 py-6 bg-white text-primary font-black text-2xl rounded-full hover:bg-slate-100 transition-all active:scale-95 shadow-2xl relative z-10">
-            Join the Revolution
+          <Link href={user ? "/dashboard" : "/signup"} className="px-12 py-6 bg-white text-primary font-black text-2xl rounded-full hover:bg-slate-100 transition-all active:scale-95 shadow-2xl relative z-10">
+            {user ? "Go to Dashboard" : "Join the Revolution"}
           </Link>
         </motion.div>
       </section>

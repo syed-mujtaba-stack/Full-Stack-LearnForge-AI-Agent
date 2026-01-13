@@ -20,7 +20,7 @@ export default function LoginPage() {
         setError("");
         try {
             await authService.signIn(email, password);
-            router.push("/dashboard");
+            router.push("/");
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Failed to login");
         } finally {
@@ -30,8 +30,8 @@ export default function LoginPage() {
 
     const handleGoogleLogin = async () => {
         try {
-            await authService.signInWithGoogle();
-            router.push("/dashboard");
+            await authService.signInWithGoogle(true);
+            router.push("/");
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Google login failed");
         }

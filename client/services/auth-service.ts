@@ -4,7 +4,8 @@ import {
     signOut as firebaseSignOut,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    signInWithRedirect
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -25,9 +26,12 @@ export const authService = {
         return signInWithEmailAndPassword(auth, email, pass);
     },
 
-    signInWithGoogle: async () => {
+    signInWithGoogle: async (useRedirect: boolean = false) => {
         if (!auth) throw new Error("Firebase not initialized");
         const provider = new GoogleAuthProvider();
+        if (useRedirect) {
+            return signInWithRedirect(auth, provider);
+        }
         return signInWithPopup(auth, provider);
     },
 

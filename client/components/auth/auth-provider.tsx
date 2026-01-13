@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "firebase/auth";
 import { authService } from "@/services/auth-service";
+import { getRedirectResult } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { AnimatePresence } from "framer-motion";
 
@@ -18,6 +20,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Handle redirect result
+        if (auth) {
+            getRedirectResult(auth).catch((error) => {
+                console.error("Error handling redirect result", error);
+            });
+        }
+
         const unsubscribe = authService.onAuthStateChanged((user) => {
             setUser(user);
             setLoading(false);

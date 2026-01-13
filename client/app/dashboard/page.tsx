@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { useRouter } from "next/navigation";
+import { userService } from "@/services/user-service";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const container = {
     hidden: { opacity: 0 },
@@ -32,31 +34,62 @@ export default function StudentDashboard() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push("/login?redirect=/dashboard");
-            return;
-        }
+        let isMounted = true;
 
-        const fetchCourses = async () => {
-            if (!user) return;
-            try {
-                const data = await enrollmentService.getMyCourses();
-                setCourses(data);
-            } catch (error) {
-                console.error("Failed to fetch enrolled courses", error);
-            } finally {
+        // Fail-safe: Force stop loading after 8 seconds
+        const timeoutId = setTimeout(() => {
+            if (isMounted) {
+                console.warn("Dashboard loading timed out, showing content anyway.");
                 setLoading(false);
             }
+        }, 5000);
+
+        const fetchDashboardData = async () => {
+            if (authLoading) return;
+
+            if (!user) {
+                router.push("/login?redirect=/dashboard");
+                return;
+            }
+
+            try {
+                // Fetch in parallel. Use .catch on userService so it doesn't block courses if it fails.
+                const registrationPromise = userService.getMe().catch(err => {
+                    console.warn("User auto-reg check failed (background):", err);
+                    return null;
+                });
+
+                const coursesPromise = enrollmentService.getMyCourses();
+
+                const [_, fetchedCourses] = await Promise.all([
+                    registrationPromise,
+                    coursesPromise
+                ]);
+
+                if (isMounted) {
+                    setCourses(fetchedCourses || []);
+                    setLoading(false);
+                    clearTimeout(timeoutId);
+                }
+            } catch (error) {
+                console.error("Dashboard data fetch failed:", error);
+                if (isMounted) {
+                    setLoading(false);
+                    clearTimeout(timeoutId);
+                }
+            }
         };
-        fetchCourses();
+
+        fetchDashboardData();
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timeoutId);
+        };
     }, [user, authLoading, router]);
 
     if (authLoading || loading) {
-        return (
-            <div className="min-h-screen bg-background p-8 flex items-center justify-center text-foreground">
-                <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
-        );
+        return <LoadingScreen />;
     }
 
     return (
