@@ -29,3 +29,13 @@ class CodeExplainRequest(BaseModel):
 
 class CodeExplainResponse(BaseModel):
     explanation: str
+
+class CourseGenerateRequest(BaseModel):
+    topic: str
+    difficulty: Optional[str] = "beginner"
+    target_audience: Optional[str] = None
+
+class CourseGenerateResponse(BaseModel):
+    course_id: int
+    title: str
+    message: str

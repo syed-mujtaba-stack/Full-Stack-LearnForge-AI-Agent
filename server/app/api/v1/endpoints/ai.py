@@ -61,3 +61,26 @@ async def explain_code(
         language=code_in.language
     )
     return {"explanation": explanation}
+
+@router.post("/generate-course", response_model=schemas.CourseGenerateResponse)
+async def generate_course(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    course_in: schemas.CourseGenerateRequest,
+    current_user_token: dict = Depends(security.get_current_user),
+) -> Any:
+    """
+    Generate a complete course structure using AI.
+    """
+    service = CourseGeneratorService(db)
+    result = await service.generate_course(
+        user_id=current_user_token.get("uid"),
+        topic=course_in.topic,
+        difficulty=course_in.difficulty,
+        target_audience=course_in.target_audience
+    )
+    
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+        
+    return result

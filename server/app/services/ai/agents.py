@@ -127,3 +127,101 @@ class CodeAssistantService(AIService):
         prompt = f"Explain this code and suggest improvements:\n\n```{language}\n{code}\n```"
         
         return await self.ai.generate_text(prompt, system_prompt=system_prompt)
+
+class CourseGeneratorService(AIService):
+    async def generate_course(self, user_id: str, topic: str, difficulty: str = "beginner", target_audience: str = None) -> Dict[str, Any]:
+        """
+        Generate a complete course structure and save it to the database.
+        """
+        from app.crud import crud_course as crud
+        from app.schemas.course import CourseCreate, ModuleCreate, LessonCreate
+
+        # 1. Define Course Structure Schema
+        course_schema = {
+            "type": "object",
+            "properties": {
+                "title": {"type": "string"},
+                "description": {"type": "string"},
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {"type": "string"},
+                            "description": {"type": "string"},
+                            "lessons": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {"type": "string"},
+                                        "content": {"type": "string"}
+                                    },
+                                    "required": ["title", "content"]
+                                },
+                                "minItems": 2,
+                                "maxItems": 4
+                            }
+                        },
+                        "required": ["title", "description", "lessons"]
+                    },
+                    "minItems": 3,
+                    "maxItems": 5
+                }
+            },
+            "required": ["title", "description", "modules"]
+        }
+
+        # 2. Request Course Generation
+        prompt = (
+            f"Generate a comprehensive course for the topic: {topic}.\n"
+            f"Difficulty Level: {difficulty}\n"
+            f"Target Audience: {target_audience or 'General learners'}\n\n"
+            "Each lesson should include a detailed educational content in Markdown format (at least 200 words per lesson)."
+        )
+        
+        system_prompt = (
+            "You are an Elite Curriculum Designer. Create highly engaging, "
+            "logically structured courses with deep academic value."
+        )
+        
+        try:
+            generated_data = await self.ai.generate_json(prompt, schema=course_schema, system_prompt=system_prompt)
+            
+            if "error" in generated_data:
+                return generated_data
+
+            # 3. Persist to Database
+            # Create Course
+            course_in = CourseCreate(
+                title=generated_data["title"],
+                description=generated_data["description"]
+            )
+            db_course = await crud.course.create(self.db, obj_in=course_in, instructor_id=user_id)
+
+            # Create Modules & Lessons
+            for i, module_data in enumerate(generated_data["modules"]):
+                module_in = ModuleCreate(
+                    title=module_data["title"],
+                    description=module_data["description"],
+                    order=i
+                )
+                db_module = await crud.module.create(self.db, obj_in=module_in, course_id=db_course.id)
+
+                for j, lesson_data in enumerate(module_data["lessons"]):
+                    lesson_in = LessonCreate(
+                        title=lesson_data["title"],
+                        content=lesson_data["content"],
+                        order=j
+                    )
+                    await crud.lesson.create(self.db, obj_in=lesson_in, module_id=db_module.id)
+
+            return {
+                "course_id": db_course.id,
+                "title": db_course.title,
+                "message": f"Successfully generated course '{db_course.title}' with {len(generated_data['modules'])} modules."
+            }
+
+        except Exception as e:
+            logger.error(f"Error generating course: {str(e)}")
+            return {"error": f"Internal error during course generation: {str(e)}"}
